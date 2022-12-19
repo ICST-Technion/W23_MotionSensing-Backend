@@ -1,0 +1,2 @@
+DEBUG_MODE = True
+PROGRAM_TYPE = 'WEB'  # 'FAST' or 'WEB'
