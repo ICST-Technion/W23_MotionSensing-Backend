@@ -24,7 +24,16 @@ TODO: add algorithm arguments
 and run the corresponding algorithm script + return results
 '''
 
-@app.route('/', methods=['GET'])
+# @app.route('/set_params', methods=['POST'])
+# def server_run2():
+#     params = request.get_json()
+#     if params is not None:
+#         for key in params:
+#             server.cur_alg.settings[key] = params[key]
+#
+#     return params
+
+@app.route('/', methods=['GET', 'POST'])
 def server_run():
     args = request.args
     while True:
@@ -39,6 +48,11 @@ def server_run():
             json_file = server.alg_run()
         elif request_type == 'get_params':
             json_file['params'] = server.get_alg_properties()
+        elif request_type == 'set_params':
+            params = request.get_json()
+            if params is not None:
+                for key in params:
+                    server.cur_alg.settings[key] = params[key]
 
         return jsonify(json_file)
 
