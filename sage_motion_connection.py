@@ -14,8 +14,8 @@ class SageMotionConnection:
         web_url = "http://" + hub_addr + "/api/v1/"
 
         # request_json = {"sensor_pairings": sensors_ids, "feedback_pairings": feedback_array}
-        request_json = {"sensor_pairings": ["88:6B:0F:E1:D7:C2"],
-                        "feedback_pairings": ["88:6B:0F:E1:D7:C2"]}
+        request_json = {"sensor_pairings": ["88:6B:0F:E1:D8:76"],
+                        "feedback_pairings": []}
         request_params = {"version_id": "510e53970c"}
 
         if not DEBUG_MODE:
