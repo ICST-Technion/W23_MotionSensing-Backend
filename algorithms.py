@@ -9,14 +9,26 @@ class RawDataAlg:
             "Calculate Euler angles": "yes",
             "Feedback threshold": 3
         }
-        self.plot_options = []
-        for sensor_idx in range(len(imus.sensors_ids)):
-            self.plot_options += [f"Yaw{sensor_idx}", f"Pitch{sensor_idx}", f"Roll{sensor_idx}",
-                                  f"Acc{sensor_idx}_X", f"Acc{sensor_idx}_Y", f"Acc{sensor_idx}_z",
-                                  f"Gyro{sensor_idx}_X", f"Gyro{sensor_idx}_Y", f"Gyro{sensor_idx}_z",
-                                  f"Quat{sensor_idx}_0", f"Quat{sensor_idx}_1", f"Quat{sensor_idx}_2",
-                                  f"Quat{sensor_idx}_3"
-                                  ]
+
+        # self.plot_options = ['ACC0-X', 'ACC0-Y', 'ACC0-Z', 'GYRO0-X', 'GYRO0-Y', 'GYRO0-Z']
+        self.plot_options = {'ACC': ['ACC-X', 'ACC-Y', 'ACC-Z'], 'GYRO': ['GYRO-X', 'GYRO-Y', 'GYRO-Z'],
+                             'Quat': ['Quat-0', 'Quat-1', 'Quat-2', 'Quat-3'], 'Euler Angles': ['Roll', 'Pitch', 'Yaw']}
+
+        # for sensor_idx in range(len(imus.sensors_ids)):
+        #     self.plot_options += [f"Yaw{sensor_idx}", f"Pitch{sensor_idx}", f"Roll{sensor_idx}",
+        #                           f"Acc{sensor_idx}_X", f"Acc{sensor_idx}_Y", f"Acc{sensor_idx}_z",
+        #                           f"Gyro{sensor_idx}_X", f"Gyro{sensor_idx}_Y", f"Gyro{sensor_idx}_z",
+        #                           f"Quat{sensor_idx}_0", f"Quat{sensor_idx}_1", f"Quat{sensor_idx}_2",
+        #                           f"Quat{sensor_idx}_3"
+        #                           ]
+
+        # for sensor_idx in range(len(imus.sensors_ids)):
+        #     self.plot_options += [f"Yaw{sensor_idx}", f"Pitch{sensor_idx}", f"Roll{sensor_idx}",
+        #                           f"Acc{sensor_idx}_X", f"Acc{sensor_idx}_Y", f"Acc{sensor_idx}_z",
+        #                           f"Gyro{sensor_idx}_X", f"Gyro{sensor_idx}_Y", f"Gyro{sensor_idx}_z",
+        #                           f"Quat{sensor_idx}_0", f"Quat{sensor_idx}_1", f"Quat{sensor_idx}_2",
+        #                           f"Quat{sensor_idx}_3"
+        #                           ]
 
         # self.sage = sage
         # self.settings = {}
@@ -33,60 +45,61 @@ class RawDataAlg:
             if self.settings["Calculate Euler angles"] == "yes":
                 Yaw, Pitch, Roll = self.calc_euler_angles(self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data)
 
-                self.data = {
-                    f"Yaw{sensor_idx}": Yaw,
-                    f"Pitch{sensor_idx}": Pitch,
-                    f"Roll{sensor_idx}": Roll,
-                    f"ACC{sensor_idx}-X": list(
+                self.data[self.imus.sensors_ids[sensor_idx]] = {
+                    f"Yaw": Yaw,
+                    f"Pitch": Pitch,
+                    f"Roll": Roll,
+                    f"ACC-X": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['ACC-X']),
-                    f"ACC{sensor_idx}-Y": list(
+                    f"ACC-Y": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['ACC-Y']),
-                    f"ACC{sensor_idx}-Z": list(
+                    f"ACC-Z": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['ACC-Z']),
-                    f"GYRO{sensor_idx}-X": list(
+                    f"GYRO-X": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['GYRO-X']),
-                    f"GYRO{sensor_idx}-Y": list(
+                    f"GYRO-Y": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['GYRO-Y']),
-                    f"GYRO{sensor_idx}-Z": list(
+                    f"GYRO-Z": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['GYRO-Z']),
-                    f"Quat{sensor_idx}-0": list(
+                    f"Quat-0": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-0']),
-                    f"Quat{sensor_idx}-1": list(
+                    f"Quat-1": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-1']),
-                    f"Quat{sensor_idx}-2": list(
+                    f"Quat-2": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-2']),
-                    f"Quat{sensor_idx}-3": list(
+                    f"Quat-3": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-3']),
                 }
             else:
-                self.data = {
-                    f"Yaw{sensor_idx}": 0,
-                    f"Pitch{sensor_idx}": 0,
-                    f"Roll{sensor_idx}": 0,
-                    f"ACC{sensor_idx}-X": list(
+                self.data[self.imus.sensors_ids[sensor_idx]] = {
+                    f"Yaw": 0,
+                    f"Pitch": 0,
+                    f"Roll": 0,
+                    f"ACC-X": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['ACC-X']),
-                    f"ACC{sensor_idx}-Y": list(
+                    f"ACC-Y": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['ACC-Y']),
-                    f"ACC{sensor_idx}-Z": list(
+                    f"ACC-Z": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['ACC-Z']),
-                    f"GYRO{sensor_idx}-X": list(
+                    f"GYRO-X": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['GYRO-X']),
-                    f"GYRO{sensor_idx}-Y": list(
+                    f"GYRO-Y": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['GYRO-Y']),
-                    f"GYRO{sensor_idx}-Z": list(
+                    f"GYRO-Z": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['GYRO-Z']),
-                    f"Quat{sensor_idx}-0": list(
+                    f"Quat-0": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-0']),
-                    f"Quat{sensor_idx}-1": list(
+                    f"Quat-1": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-1']),
-                    f"Quat{sensor_idx}-2": list(
+                    f"Quat-2": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-2']),
-                    f"Quat{sensor_idx}-3": list(
+                    f"Quat-3": list(
                         self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-3']),
                 }
 
-            print(f'fb threshold: {self.settings["Feedback threshold"]}')
-            print(f'roll={self.data[f"Roll{sensor_idx}"]} pitch={self.data[f"Pitch{sensor_idx}"]} yaw={self.data[f"Yaw{sensor_idx}"]}')
+            # print(f'fb threshold: {self.settings["Feedback threshold"]}')
+            # print(f'roll={self.data[f"Roll{sensor_idx}"]} pitch={self.data[f"Pitch{sensor_idx}"]} yaw={self.data[f"Yaw{sensor_idx}"]}')
+            # print(self.data)
 
         return self.data
 

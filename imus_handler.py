@@ -1,17 +1,23 @@
 import numpy as np
 from imu_object import ImuObject
 from sage_motion_connection import SageMotionConnection
+import json
 
 N = 1000
 
 
 class ImusHandler(SageMotionConnection):
-    def __init__(self, sensors_ids=("88:6B:0F:E1:D8:98"), feedback_array=()):
+    def __init__(self):
+        f = open('config.json')
+        configurations = json.load(f)
+        sensors_ids = configurations['imu_ids']
+        feedback_array = configurations['feedback_ids']
         SageMotionConnection.__init__(self, sensors_ids=sensors_ids, feedback_array=feedback_array)
 
         self.imu_index_list = [f"IMU-{i}" for i in range(len(sensors_ids))]
         self.imus_obj = {imu_name: ImuObject(name=imu_name, mac_address=sensors_ids[idx], index=idx) for idx, imu_name in enumerate(self.imu_index_list)}
         self.pre_time = 0
+        f.close()
 
     def read_data(self):
         raw_data = self.get_raw_data()

@@ -38,11 +38,17 @@ class Server:
     def get_alg_properties(self):
         return self.cur_alg.properties
 
+    def get_imus(self):
+        return self.imus.sensors_ids
+
     def set_alg_properties(self, properties):
         self.cur_alg.properties = properties
 
     def get_algorithm_list(self):
         return list(self.algorithms.keys())
+
+    def get_data_types(self):
+        return self.cur_alg.plot_options
 
     def run(self):
         x = threading.Thread(target=thread_function, args=(self.imus,))

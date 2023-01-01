@@ -6,15 +6,9 @@ from imus_handler import ImusHandler
 app = Flask(__name__)
 
 ###############################################
-sensors_ids = ["88:6B:0F:E1:D8:68"]
-###############################################
-
 # connect to sensors
-imus = ImusHandler(sensors_ids)
-###############################################
+imus = ImusHandler()
 server = Server(imus)
-
-
 ###############################################
 
 '''
@@ -48,6 +42,10 @@ def server_run():
             json_file = server.alg_run()
         elif request_type == 'get_params':
             json_file['params'] = server.get_alg_properties()
+        elif request_type == 'get_imus':
+            json_file['imus'] = server.get_imus()
+        elif request_type == 'get_data_types':
+            json_file['data_types'] = server.get_data_types()
         elif request_type == 'set_params':
             params = request.get_json()
             if params is not None:
