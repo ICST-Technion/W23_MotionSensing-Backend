@@ -14,7 +14,7 @@ class SageMotionConnection:
         web_url = "http://" + hub_addr + "/api/v1/"
 
         # request_json = {"sensor_pairings": sensors_ids, "feedback_pairings": feedback_array}
-        request_json = {"sensor_pairings": ["88:6B:0F:E1:D8:76"],
+        request_json = {"sensor_pairings": ["88:6B:0F:E1:D8:48"],
                         "feedback_pairings": []}
         request_params = {"version_id": "510e53970c"}
 
@@ -45,6 +45,7 @@ class SageMotionConnection:
             if message == '':
                 return
             raw_data = json.loads(message)["raw_data"]
+            # print(raw_data)
         else:
             data_row = self.debug_data_df.iloc[self.data_row_counter]
             if self.data_row_counter == self.debug_data_df.shape[0]-1:

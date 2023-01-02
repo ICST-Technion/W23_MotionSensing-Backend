@@ -99,7 +99,9 @@ class RawDataAlg:
 
             # print(f'fb threshold: {self.settings["Feedback threshold"]}')
             # print(f'roll={self.data[f"Roll{sensor_idx}"]} pitch={self.data[f"Pitch{sensor_idx}"]} yaw={self.data[f"Yaw{sensor_idx}"]}')
-            # print(self.data)
+            # for imu in self.imus.sensors_ids:
+            #     print(f'id: {imu} accx: {self.data[imu]["ACC-X"]}')
+            # print(self.imus.sensors_ids)
 
         return self.data
 
