@@ -14,11 +14,14 @@ class ImusHandler(SageMotionConnection):
         sensors_ids = configurations['imu_ids']
         feedback_array = configurations['feedback_ids']
         SageMotionConnection.__init__(self, sensors_ids=sensors_ids, feedback_array=feedback_array)
-
+        self.calculate_euler_angles = True
         self.imu_index_list = [f"IMU-{i}" for i in range(len(sensors_ids))]
         self.imus_obj = {imu_name: ImuObject(name=imu_name, mac_address=sensors_ids[idx], index=idx) for idx, imu_name in enumerate(self.imu_index_list)}
         self.pre_time = 0
         f.close()
+
+    def should_calc_euler_angles(self, should_calc):
+        self.calculate_euler_angles = should_calc
 
     def read_data(self):
         raw_data = self.get_raw_data()
@@ -66,6 +69,6 @@ class ImusHandler(SageMotionConnection):
                         quat = np.array(
                             [imu_data['Quat1'], imu_data['Quat2'], imu_data['Quat3'], imu_data['Quat4']]).tolist()
 
-                        self.imus_obj[imu_name].push_data(acc, gyro, quat)
+                        self.imus_obj[imu_name].push_data(acc, gyro, quat, self.calculate_euler_angles)
                         self.imus_obj[imu_name].pre_timeStep = timeStep
 

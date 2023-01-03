@@ -46,6 +46,11 @@ class ImuObject:
         #
         N = 500
 
+        self.imu_data = {
+            'Roll': collections.deque(maxlen=N),
+            'Pitch': collections.deque(maxlen=N),
+            'Yaw': collections.deque(maxlen=N)
+        }
         for imu_data_type in ['ACC', 'GYRO', 'Angle', 'Quat']:
             if imu_data_type == 'Quat':
                 for i in range(4):
@@ -54,11 +59,17 @@ class ImuObject:
                 for axis in ['X', 'Y', 'Z']:
                     self.imu_data[f'{imu_data_type}-{axis}'] = collections.deque(maxlen=N)
 
+
     def save_to_csv(self, data):
         for row in data:
             self.csv_writer.writerow(row)
 
-    def push_data(self, acc, gyro, quat):
+    def push_data(self, acc, gyro, quat, calc_euler_angles):
+        roll, pitch, yaw = 0, 0, 0
+
+        if calc_euler_angles:
+            M, roll, pitch, yaw = self.quant2rotation_andEulerAngles(quat[0], quat[1], quat[2], quat[3],
+                                                                     degrees_flag=True)
         # R_LG = np.array([[-0.7275223679275690,  0.68587613917894000, 0.01688567055386180],
         #                  [- 0.685932802495416, -0.72765835991016600, 0.00308248497683352],
         #                  [0.01440120223619500, -0.00933985855557795, 0.99985267535588200]])
@@ -84,6 +95,10 @@ class ImuObject:
         self.imu_data['Quat-1'].append(quat[1])
         self.imu_data['Quat-2'].append(quat[2])
         self.imu_data['Quat-3'].append(quat[3])
+
+        self.imu_data['Roll'].append(roll)
+        self.imu_data['Pitch'].append(pitch)
+        self.imu_data['Yaw'].append(yaw)
 
         self.save_to_csv([[acc[0], acc[1], acc[2], quat[0], quat[1], quat[2], quat[3]]])
 

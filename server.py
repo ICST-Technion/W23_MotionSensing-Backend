@@ -42,7 +42,7 @@ class Server:
         return self.imus.sensors_ids
 
     def set_alg_properties(self, properties):
-        self.cur_alg.properties = properties
+        self.cur_alg.set_properties(properties)
 
     def get_algorithm_list(self):
         return list(self.algorithms.keys())

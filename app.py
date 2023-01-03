@@ -49,8 +49,9 @@ def server_run():
         elif request_type == 'set_params':
             params = request.get_json()
             if params is not None:
-                for key in params:
-                    server.cur_alg.settings[key] = params[key]
+                server.cur_alg.set_settings(params)
+                # for key in params:
+                #     server.cur_alg.settings[key] = params[key]
 
         return jsonify(json_file)
 
