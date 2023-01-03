@@ -1,18 +1,27 @@
+from base_algorithm_class import Alg
 from imus_handler import ImusHandler
 
-class RawDataAlg:
+
+class RawDataAlg(Alg):
     def __init__(self, imus: ImusHandler):
-        self.properties = [{"type": "CheckList", "param_name": "Calculate Euler angles", "default_value": 0, "values": ["yes", "no"]},
-                           {"type": "TextBox", "param_name": "Feedback threshold", "default_value": 3}
-                           ]
-        self.settings = {
-            "Calculate Euler angles": "yes",
-            "Feedback threshold": 3
-        }
+        Alg.__init__(
+            self,
+            properties=[
+                {"type": "CheckList", "param_name": "Calculate Euler angles", "default_value": 0,
+                 "values": ["yes", "no"]},
+                {"type": "TextBox", "param_name": "Feedback threshold", "default_value": 3}
+            ],
+            settings={
+                "Calculate Euler angles": "yes",
+                "Feedback threshold": 3
+            },
+            plot_options={'ACC': ['ACC-X', 'ACC-Y', 'ACC-Z'], 'GYRO': ['GYRO-X', 'GYRO-Y', 'GYRO-Z'],
+                          'Quat': ['Quat-0', 'Quat-1', 'Quat-2', 'Quat-3'], 'Euler Angles': ['Roll', 'Pitch', 'Yaw']},
+            imus=imus,
+            name='raw_data'
+        )
 
         # self.plot_options = ['ACC0-X', 'ACC0-Y', 'ACC0-Z', 'GYRO0-X', 'GYRO0-Y', 'GYRO0-Z']
-        self.plot_options = {'ACC': ['ACC-X', 'ACC-Y', 'ACC-Z'], 'GYRO': ['GYRO-X', 'GYRO-Y', 'GYRO-Z'],
-                             'Quat': ['Quat-0', 'Quat-1', 'Quat-2', 'Quat-3'], 'Euler Angles': ['Roll', 'Pitch', 'Yaw']}
 
         # for sensor_idx in range(len(imus.sensors_ids)):
         #     self.plot_options += [f"Yaw{sensor_idx}", f"Pitch{sensor_idx}", f"Roll{sensor_idx}",
@@ -32,9 +41,7 @@ class RawDataAlg:
 
         # self.sage = sage
         # self.settings = {}
-        self.imus = imus
         self.data = {}
-        self.name = 'raw_data'
 
     def set_settings(self, settings):
         if settings is not None:
@@ -69,16 +76,18 @@ class RawDataAlg:
         qyz = qy * qz
         qzz = qz * qz
         #
-        roll_x = np.arctan2((2 * qyz + 2 * qwx), (1 - 2 * (qxx + qyy)))  # φ = roll = rotation around XG, defined from [-180°…180°]
-        pitch_y = np.arcsin(2 * qwy - 2 * qxz)                           # θ = pitch = rotation around YG, defined from [-90°…90°]
-        yaw_z = np.arctan2((2 * qxy + 2 * qwz), (1 - 2 * (qyy + qzz)))   # ψ = yaw = rotation around ZG, defined from [-180°…180°]
+        roll_x = np.arctan2((2 * qyz + 2 * qwx),
+                            (1 - 2 * (qxx + qyy)))  # φ = roll = rotation around XG, defined from [-180°…180°]
+        pitch_y = np.arcsin(2 * qwy - 2 * qxz)  # θ = pitch = rotation around YG, defined from [-90°…90°]
+        yaw_z = np.arctan2((2 * qxy + 2 * qwz),
+                           (1 - 2 * (qyy + qzz)))  # ψ = yaw = rotation around ZG, defined from [-180°…180°]
 
         # Rotation matrix from EulerAngles
         R_GS = Rz(yaw_z) * Ry(pitch_y) * Rx(roll_x)
         # Rotation matrix from quaternions
-        M_GS = 2 * np.array([[qww + qxx - 0.5, qxy - qwz      , qxz + qwy],
-                             [qxy + qwz      , qww + qyy - 0.5, qyz - qwx],
-                             [qxz - qwy      , qyz + qwx      , qww + qzz - 0.5]])
+        M_GS = 2 * np.array([[qww + qxx - 0.5, qxy - qwz, qxz + qwy],
+                             [qxy + qwz, qww + qyy - 0.5, qyz - qwx],
+                             [qxz - qwy, qyz + qwx, qww + qzz - 0.5]])
 
         # R_GS should be equal to M_GS
 
@@ -94,7 +103,7 @@ class RawDataAlg:
         # data = self.imus.read_data()
         for sensor_idx in range(len(self.imus.sensors_ids)):
             # if self.settings["Calculate Euler angles"] == "yes":
-                # Yaw, Pitch, Roll = self.calc_euler_angles(self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data)
+            # Yaw, Pitch, Roll = self.calc_euler_angles(self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data)
 
             self.data[self.imus.sensors_ids[sensor_idx]] = {
                 f"Yaw": list(
@@ -161,6 +170,3 @@ class RawDataAlg:
 
     def calc_euler_angles(self, data):
         return 1, 1, 1
-
-
-
