@@ -2,6 +2,9 @@ from imus_handler import ImusHandler
 from abc import ABC, abstractmethod
 from typing import List, Dict
 
+"""
+!!! remember to add your algorithm to Server->algorithms !!!
+"""
 
 class Alg(ABC):
     def __init__(self, properties: List[dict], settings: dict, plot_options: Dict[str, List[str]], imus: ImusHandler,
