@@ -26,7 +26,7 @@ class Server:
         self.imus = imus_in
         # self.ans = {}
         self.algorithms = {
-            'raw_data': algorithms.RawDataAlg(self.imus)
+            'Raw Data': algorithms.RawDataAlg(self.imus)
         }
 
         self.cur_alg = list(self.algorithms.values())[0]
@@ -35,6 +35,9 @@ class Server:
 
     def set_cur_alg(self, alg):
         self.cur_alg = self.algorithms[alg]
+
+    def get_cur_alg(self):
+        return self.cur_alg.name
 
     def get_alg_properties(self):
         return self.cur_alg.properties
