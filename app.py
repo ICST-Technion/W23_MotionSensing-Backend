@@ -46,6 +46,8 @@ def server_run():
             json_file['imus'] = server.get_imus()
         elif request_type == 'get_data_types':
             json_file['data_types'] = server.get_data_types()
+        elif request_type == 'get_cur_alg':
+            json_file['cur_alg'] = server.get_cur_alg()
         elif request_type == 'set_params':
             params = request.get_json()
             if params is not None:

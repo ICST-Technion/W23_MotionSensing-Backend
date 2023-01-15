@@ -32,6 +32,9 @@ class Server:
         x = threading.Thread(target=thread_function, args=(self.imus,))
         x.start()
 
+    def get_cur_alg(self):
+        return self.cur_alg.name
+
     def set_cur_alg(self, alg):
         self.cur_alg = self.algorithms[alg]
 
