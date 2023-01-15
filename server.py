@@ -26,9 +26,9 @@ class Server:
         self.imus = imus_in
         # self.ans = {}
         self.algorithms = {
-            'raw_data': algorithms.RawDataAlg(self.imus)
+            'Raw Data': algorithms.RawDataAlg(self.imus)
         }
-        self.cur_alg = self.algorithms['raw_data']
+        self.cur_alg = list(self.algorithms.values())[0]
         x = threading.Thread(target=thread_function, args=(self.imus,))
         x.start()
 
