@@ -1,12 +1,8 @@
 import numpy as np
 import collections
 import plotly.express as px
-
 import csv
-from pathlib import Path
-
 import matplotlib.pyplot as plt
-from itertools import product, combinations
 import matplotlib
 matplotlib.use('TkAgg')
 
@@ -44,7 +40,7 @@ class ImuObject:
         self.csv_writer.writerow(header)
 
         #
-        N = 500
+        N = 1
 
         self.imu_data = {
             'Roll': collections.deque(maxlen=N),
