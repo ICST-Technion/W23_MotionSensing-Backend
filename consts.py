@@ -1,2 +1,2 @@
-DEBUG_MODE = True
-PROGRAM_TYPE = 'WEB'  # 'FAST' or 'WEB'
+DEBUG_MODE = False
+PORT = 8080
