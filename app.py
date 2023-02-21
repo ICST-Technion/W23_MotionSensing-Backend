@@ -38,7 +38,7 @@ logging.basicConfig(
 app = Flask(__name__)
 
 last_request_time = time.time()
-app_timeout = 10
+app_timeout = 30
 
 
 def check_timeout(logger: logging.Logger):
