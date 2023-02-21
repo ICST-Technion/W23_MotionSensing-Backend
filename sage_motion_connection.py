@@ -28,6 +28,7 @@ class SageMotionConnection:
         self.feedback_array = None
         self.sensors_ids = None
         self.raw_data = None
+        self.feedback_activated = False
 
     def on_message(self, wsapp, message):
         semaphore.acquire()

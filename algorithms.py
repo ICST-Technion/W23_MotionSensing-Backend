@@ -92,12 +92,13 @@ class RawDataAlg(Alg):
         def send_feedback_request():
             # This is done on a separate thread so we can keep processing
             # data while we wait for the http response
-
+            self.imus.feedback_activated = True
             requests.put(self.imus.web_url + 'nodes/connected/feedbacks/' + str(node_index) + '/vibrate',
                          params={"event": mode, "time": length})
             if mode == 'on':
                 time.sleep(length / 10.0)
                 self.current_feedback_mode[node_index] = 'off'
+                self.imus.feedback_activated = False
 
         t = Thread(target=send_feedback_request)
         t.daemon = True
@@ -145,4 +146,5 @@ class RawDataAlg(Alg):
                     self.set_feedback(0, mode='on')
                 else:
                     self.set_feedback(0, mode='off')
+                    self.imus.feedback_activated = False
         return self.data
