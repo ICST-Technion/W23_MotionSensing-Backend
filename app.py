@@ -75,7 +75,7 @@ def keepalive_handler():
 @app.route('/stream')
 def streamed_response():
     ans = server.alg_run()
-    ans['feedback_active'] = 'Yes' if server.imus.feedback_activated else 'No'
+    ans['feedback_active'] = 'Yes' if server.imus.feedback_activated and server.imus.feedback_array else 'No'
     return jsonify(ans)
 
 
