@@ -1,6 +1,7 @@
 import copy
 import logging
 import os
+import random
 import threading
 
 import numpy as np
@@ -49,6 +50,7 @@ class SageMotionConnection:
         # print('setting up connection')
         connection_status = {}
         hub_addr = "192.168.137.1"  # fixed address for wired connect with SageHub
+        hub_port = ':5678'
         self.web_url = "http://" + hub_addr + "/api/v1/"
         request_json = {"sensor_pairings": self.sensors_ids,
                         "feedback_pairings": self.feedback_array}
@@ -78,15 +80,16 @@ class SageMotionConnection:
             app_logger.info(f"Setting up debug mode sage connection")
             connection_status['imus'] = self.sensors_ids
             connection_status['feedbacks'] = self.feedback_array
-            hub_addr = "localhost"
+            hub_addr = 'localhost'
+            hub_port = ':7890'
 
         if self.ws is not None:
             app_logger.info(f"Closing socket")
             self.ws.close()
         connection_status = {'imus': self.sensors_ids, 'feedbacks': self.feedback_array}
         # websocket.setdefaulttimeout(None)
-        app_logger.info(f"Opening a new socket with url: " + "ws://" + f"{hub_addr}" + ":5678")
-        self.ws = websocket.WebSocketApp("ws://" + hub_addr + ":5678",
+        app_logger.info(f"Opening a new socket with url: " + "ws://" + f"{hub_addr}" + hub_port)
+        self.ws = websocket.WebSocketApp("ws://" + hub_addr + hub_port,
                                          on_ping=self.on_ping,
                                          on_message=self.on_message,
                                          on_pong=self.on_pong)
@@ -95,12 +98,18 @@ class SageMotionConnection:
         return connection_status
 
     def get_imu_batteries(self):
-        r = requests.get(self.web_url + 'system_status').json()
         batteries = {}
-        for sensor_stats in r['sage_status']['sensor']:
-            batteries[sensor_stats['hwAddress']] = sensor_stats['battery']
-        for sensor_stats in r['sage_status']['feedback']:
-            batteries[sensor_stats['hwAddress']] = sensor_stats['battery']
+        if not DEBUG_MODE:
+            r = requests.get(self.web_url + 'system_status').json()
+            for sensor_stats in r['sage_status']['sensor']:
+                batteries[sensor_stats['hwAddress']] = sensor_stats['battery']
+            for sensor_stats in r['sage_status']['feedback']:
+                batteries[sensor_stats['hwAddress']] = sensor_stats['battery']
+        else:
+            for imu in self.sensors_ids:
+                batteries[imu] = random.randint(0, 100)
+            for imu in self.feedback_array:
+                batteries[imu] = random.randint(0, 100)
         return batteries
 
     def get_raw_data(self):

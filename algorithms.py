@@ -1,9 +1,8 @@
 import time
 from threading import Thread
-
 import requests
-
 from base_algorithm_class import Alg
+from consts import DEBUG_MODE
 from imus_handler import ImusHandler, imu_object_semaphore
 
 
@@ -25,27 +24,6 @@ class RawDataAlg(Alg):
             imus=imus,
             name='Raw Data'
         )
-        # self.plot_options = {'ACC': ['ACC-X', 'ACC-Y', 'ACC-Z'], 'GYRO': ['GYRO-X', 'GYRO-Y', 'GYRO-Z'],
-        #                      'Quat': ['Quat-0', 'Quat-1', 'Quat-2', 'Quat-3'], 'Euler Angles': ['Roll', 'Pitch', 'Yaw']}
-
-        # for sensor_idx in range(len(imus.sensors_ids)):
-        #     self.plot_options += [f"Yaw{sensor_idx}", f"Pitch{sensor_idx}", f"Roll{sensor_idx}",
-        #                           f"Acc{sensor_idx}_X", f"Acc{sensor_idx}_Y", f"Acc{sensor_idx}_z",
-        #                           f"Gyro{sensor_idx}_X", f"Gyro{sensor_idx}_Y", f"Gyro{sensor_idx}_z",
-        #                           f"Quat{sensor_idx}_0", f"Quat{sensor_idx}_1", f"Quat{sensor_idx}_2",
-        #                           f"Quat{sensor_idx}_3"
-        #                           ]
-
-        # for sensor_idx in range(len(imus.sensors_ids)):
-        #     self.plot_options += [f"Yaw{sensor_idx}", f"Pitch{sensor_idx}", f"Roll{sensor_idx}",
-        #                           f"Acc{sensor_idx}_X", f"Acc{sensor_idx}_Y", f"Acc{sensor_idx}_z",
-        #                           f"Gyro{sensor_idx}_X", f"Gyro{sensor_idx}_Y", f"Gyro{sensor_idx}_z",
-        #                           f"Quat{sensor_idx}_0", f"Quat{sensor_idx}_1", f"Quat{sensor_idx}_2",
-        #                           f"Quat{sensor_idx}_3"
-        #                           ]
-
-        # self.sage = sage
-        # self.settings = {}
         self.data = {}
         self.current_feedback_mode = ['off'] * 8
 
@@ -130,8 +108,6 @@ class RawDataAlg(Alg):
         # data = self.imus.read_data()
         # print(self.imus.imus_obj[self.imus.imu_index_list[0]].imu_data['ACC-X'])
         for sensor_idx in range(len(self.imus.sensors_ids)):
-            # if self.settings["Calculate Euler angles"] == "yes":
-            # Yaw, Pitch, Roll = self.calc_euler_angles(self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data)
             imu_object_semaphore.acquire()
             self.data[self.imus.sensors_ids[sensor_idx]] = {
                 f"Yaw": list(
@@ -162,14 +138,11 @@ class RawDataAlg(Alg):
                     self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-3']),
             }
             imu_object_semaphore.release()
-            FrontA = self.data[self.imus.sensors_ids[sensor_idx]]['Roll'][0]
-            FrontA_thresh = self.settings['Feedback threshold'];
-            if FrontA_thresh > 0:
+            FrontA_thresh = self.settings['Feedback threshold']
+            if FrontA_thresh > 0 and not DEBUG_MODE:
+                FrontA = self.data[self.imus.sensors_ids[sensor_idx]]['Roll'][0]
                 if FrontA < -FrontA_thresh or FrontA > FrontA_thresh:
                     self.set_feedback(0, mode='on')
                 else:
                     self.set_feedback(0, mode='off')
         return self.data
-
-    def calc_euler_angles(self, data):
-        return 1, 1, 1
