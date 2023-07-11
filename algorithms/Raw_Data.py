@@ -20,7 +20,7 @@ class RawDataAlg(Alg):
                 "Feedback threshold": 3
             },
             plot_options={'ACC': ['ACC-X', 'ACC-Y', 'ACC-Z'], 'GYRO': ['GYRO-X', 'GYRO-Y', 'GYRO-Z'],
-                          'Quat': ['Quat-0', 'Quat-1', 'Quat-2', 'Quat-3'], 'Euler Angles': ['Roll', 'Pitch', 'Yaw']},
+                          'Quat': ['Quat-0', 'Quat-1', 'Quat-2', 'Quat-3'], 'Mag': ['MAGX']},
             imus=imus,
             name='Raw Data'
         )
@@ -111,12 +111,6 @@ class RawDataAlg(Alg):
         for sensor_idx in range(len(self.imus.sensors_ids)):
             imu_object_semaphore.acquire()
             self.data[self.imus.sensors_ids[sensor_idx]] = {
-                f"Yaw": list(
-                    self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Yaw']),
-                f"Pitch": list(
-                    self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Pitch']),
-                f"Roll": list(
-                    self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Roll']),
                 f"ACC-X": list(
                     self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['ACC-X']),
                 f"ACC-Y": list(
@@ -137,14 +131,19 @@ class RawDataAlg(Alg):
                     self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-2']),
                 f"Quat-3": list(
                     self.imus.imus_obj[self.imus.imu_index_list[sensor_idx]].imu_data['Quat-3']),
+                f"MAGX": list(
+                    range(5)),
             }
+
             imu_object_semaphore.release()
-            FrontA_thresh = self.settings['Feedback threshold']
-            if FrontA_thresh > 0 and not DEBUG_MODE:
-                FrontA = self.data[self.imus.sensors_ids[sensor_idx]]['Roll'][0]
-                if FrontA < -FrontA_thresh or FrontA > FrontA_thresh:
-                    self.set_feedback(0, mode='on')
-                else:
-                    self.set_feedback(0, mode='off')
-                    self.imus.feedback_activated = False
+            # FrontA_thresh = self.settings['Feedback threshold']
+            # if FrontA_thresh > 0 and not DEBUG_MODE:
+            #     FrontA = self.data[self.imus.sensors_ids[sensor_idx]]['Roll'][0]
+            #     if FrontA < -FrontA_thresh or FrontA > FrontA_thresh:
+            #         self.set_feedback(0, mode='on')
+            #     else:
+            #         self.set_feedback(0, mode='off')
+            #         self.imus.feedback_activated = False
         return self.data
+
+

@@ -2,10 +2,14 @@ import logging
 import threading
 import time
 from imus_handler import ImusHandler
-import algorithms
+import os
+import inspect
+import importlib.util
+from algorithms.Raw_Data import RawDataAlg
 
 event = threading.Event()
 app_logger = logging.getLogger(__name__)
+
 
 def thread_function(imus: ImusHandler):
     while True:
@@ -14,7 +18,7 @@ def thread_function(imus: ImusHandler):
         imus.read_data()
         # print("thread_function:")
         # print(imus.imus_obj.values())
-        time.sleep(0.01)
+        time.sleep(0.001)
 
 
 #############################
@@ -24,10 +28,11 @@ class Server:
         # global imus
         # imus = imus_in
         self.imus = imus_in
-        # self.ans = {}
+        self.ans = {}
         self.algorithms = {
-            'Raw Data': algorithms.RawDataAlg(self.imus)
+            'Raw Data': RawDataAlg(self.imus)
         }
+
         self.cur_alg = list(self.algorithms.values())[0]
         # self.data_read_thread = threading.Thread(target=thread_function, args=(self.imus,))
         # self.data_read_thread.start()

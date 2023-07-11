@@ -3,7 +3,7 @@ import logging
 import os
 import threading
 import time
-
+import os
 from flask import Flask, request, jsonify
 from waitress import serve
 
@@ -11,15 +11,21 @@ from consts import *
 from imus_handler import ImusHandler
 from server import Server
 
+log_dir_path = "logs"
+
+if not os.path.exists(log_dir_path):
+    os.makedirs(log_dir_path)
+
 now = datetime.datetime.now()
-log_file = str(now.date()) \
+log_file = os.path.join(log_dir_path, \
+           str(now.date()) \
            + "--" \
            + str(now.time().hour) \
            + "-" \
            + str(now.time().minute) \
            + "-" \
            + str(now.time().second) \
-           + "--backend.log"
+           + "--backend.log")
 
 formatter = logging.Formatter('%(asctime)s [%(levelname)s] - %(message)s')
 
